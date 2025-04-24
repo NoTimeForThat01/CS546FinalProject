@@ -1,0 +1,23 @@
+{{#extend "main"}}
+{{#content "body"}}
+  <h2>Report a Safety Incident</h2>
+  <form action="/incidents" method="POST">
+    <input type="hidden" name="reporterId" value="PUT-USER-ID-HERE" />
+    
+    <label for="location">Location:</label>
+    <input type="text" name="location" required />
+
+    <label for="description">Description:</label>
+    <textarea name="description" required></textarea>
+
+    <label for="severity">Severity:</label>
+    <select name="severity" required>
+      <option value="Low">Low</option>
+      <option value="Medium">Medium</option>
+      <option value="High">High</option>
+    </select>
+
+    <button type="submit">Submit Incident</button>
+  </form>
+{{/content}}
+{{/extend}}

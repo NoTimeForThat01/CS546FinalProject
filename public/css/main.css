@@ -1,0 +1,419 @@
+body {
+    font-family: 'Arial', sans-serif;
+    color: #333;
+    background-color: #f5f5f5;
+    margin: 0;
+    padding: 0;
+    
+    background-image: url('/public/images/vibepic.jpg');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+    position: relative;
+}
+
+form {
+    color: #7f8c8d;
+    background-color: white;
+    display: inline-block;
+    text-align: left;
+    margin-left: auto;
+    margin-right: auto;
+    border-radius: 5px;
+    margin-top: 15px;
+}
+
+main {
+    color: #7f8c8d;
+    background-color: white;
+    display: inline-block;
+    text-align: left;
+    margin-left: 15px;
+    margin-right: 15px;
+    padding: 20px;
+    border-radius: 5px;
+    margin-top: 15px;
+}
+
+div {
+    margin: 15px;
+}
+
+#user-list {
+    max-width: 100%;
+}
+
+#other-allergy-container {
+    display: none;
+}
+
+.redirect-links {
+    margin-top: 15px;
+    text-align: center;
+}
+
+.redirect-links a {
+    color: #3498db;
+    text-decoration: none;
+}
+
+.redirect-links a:hover {
+    text-decoration: underline;
+}
+
+.admin-btns {
+    margin-top: 15px;
+    text-align: center;
+}
+
+.admin-btns a {
+    color: white;
+    text-decoration: none;
+}
+
+.redirect-links a:hover {
+    text-decoration: none;
+}
+
+.log-in-div {
+    text-align: center;
+}
+
+.login-page {
+    background-color: white;
+    padding: 20px;
+    margin: 0 auto 20px;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    transition: transform 0.3s ease;
+    max-width: 40%;
+    text-align: center;
+    display: block;
+    text-decoration: none;
+}
+
+.register-page {
+    background-color: white;
+    padding: 20px;
+    margin: 0 auto 20px;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    transition: transform 0.3s ease;
+    max-width: 40%;
+    text-align: center;
+    display: block;
+    text-decoration: none;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    text-align: center;
+}
+
+.header-container {
+    color: white;
+    padding: 20px 0;
+    margin-bottom: 30px;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    text-align: center;
+}
+
+.main-title {
+    margin: 0;
+    padding: 10px 0;
+    font-size: 3em;
+    color: #ecf0f1;
+}
+
+.main-title a {
+    text-decoration: none;
+    color: inherit;
+}
+
+.main-title a:hover {
+    text-decoration: none;
+}
+
+.login-section {
+    text-align: center; 
+    margin-bottom: 20px;
+}
+
+.ban-btn, .unban-btn {
+    padding: 8px 15px;
+    margin: 0 10px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: all 0.3s ease;
+    display: inline-block;
+    text-decoration: none;
+}
+
+.ban-btn {
+    background-color: #da1010;
+    color: white;
+}
+
+.ban-btn:hover {
+    background-color: #d83434
+}
+
+.unban-btn {
+    background-color: #2ecc71;
+    color: white;
+}
+
+.unban-btn:hover {
+    background-color: #27ae60;
+}
+
+.login-btn, .signup-btn {
+    padding: 8px 15px;
+    margin: 0 10px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: all 0.3s ease;
+    display: inline-block;
+    text-decoration: none;
+}
+
+.login-btn {
+    background-color: #3498db;
+    color: white;
+}
+
+.signup-btn {
+    background-color: #2ecc71;
+    color: white;
+}
+
+.login-btn:hover {
+    background-color: #2980b9;
+}
+
+.signup-btn:hover {
+    background-color: #27ae60;
+}
+
+.alert-box {
+    background-color: #f8d7da;
+    padding: 3px;
+    margin: 20px auto 20px;
+    border-radius: 4px;
+    max-width: 80%;
+    text-align: center;
+}
+
+.alert-text {
+    margin: 0;
+    color: #721c24;
+}
+
+.content-section {
+    background-color: white;
+    padding: 20px;
+    margin: 0 auto 20px;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    transition: transform 0.3s ease;
+    max-width: 40%;
+    text-align: center;
+    display: block;
+    text-decoration: none;
+}
+
+.clickable-section {
+    cursor: pointer;
+}
+
+.clickable-section:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+
+.login-title {
+    color: #2c3e50;
+    margin-top: 0;
+    border-bottom: 2px solid #ecf0f1;
+    padding-bottom: 10px;
+}
+
+.register-title {
+    color: #2c3e50;
+    margin-top: 0;
+    border-bottom: 2px solid #ecf0f1;
+    padding-bottom: 10px;
+}
+
+.section-title {
+    color: #2c3e50;
+    margin-top: 0;
+    border-bottom: 2px solid #ecf0f1;
+    padding-bottom: 10px;
+}
+
+.section-text {
+    color: #7f8c8d;
+    margin-bottom: 0;
+}
+
+.footer-text {
+    text-align: center;
+    margin-top: 40px;
+    color: #aac0c1;
+    font-size: 1em;
+}
+
+@media (max-width: 768px) {
+    .main-title {
+        font-size: 1.8em;
+    }
+    
+    .content-section {
+        padding: 15px;
+        max-width: 90%;
+    }
+}
+
+@media (max-width: 480px) {
+    .container {
+        padding: 10px;
+    }
+    
+    .main-title {
+        font-size: 1.5em;
+    }
+    
+    .login-btn, .signup-btn {
+        padding: 6px 12px;
+        font-size: 0.9em;
+        margin: 0 5px;
+    }
+    
+    .alert-box, .content-section {
+        max-width: 95%;
+    }
+}
+/* login/signup styles */
+.auth-modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.5);
+}
+
+.auth-modal .modal-content {
+    background-color: #fefefe;
+    margin: 20px auto;
+    padding: 20px;
+    width: 90%;
+    max-width: 450px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    position: relative;
+    top: 50%;
+    transform: translateY(-50%);
+    max-height: 90vh;
+    overflow-y: auto;
+    text-align: center; 
+}
+
+.auth-modal h2 {
+    margin-top: 0;
+    color: #2c3e50;
+}
+
+.auth-modal form div {
+    margin-bottom: 15px;
+}
+
+.auth-modal label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 500;
+}
+
+.auth-modal input,
+.auth-modal select {
+    width: 90%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 16px;
+}
+
+.auth-modal button {
+    width: 100%;
+    padding: 12px;
+    background-color: #3498db;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.auth-modal button:hover {
+    background-color: #2980b9;
+}
+
+.auth-message {
+    margin-top: 15px;
+    padding: 10px;
+    border-radius: 4px;
+}
+
+.auth-message.success {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.auth-message.error {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+.switch-auth {
+    margin-top: 15px;
+    text-align: center;
+}
+
+.switch-auth a {
+    color: #3498db;
+    text-decoration: none;
+}
+
+.switch-auth a:hover {
+    text-decoration: underline;
+}
+
+body.modal-open {
+    overflow: hidden;
+    position: fixed;
+    width: 100%;
+}
+
+.restaurant-box {
+    display: block;
+    padding: 15px; /* Add padding inside the box */
+    margin-bottom: 20px; /* Space between boxes */
+    border: 1px solid #ddd; /* Border to make the box visible */
+    background-color: #c70808; /* Background color */
+    text-decoration: none; /* Remove underlines if the box is a link */
+    color: inherit; /* Keep the text color from parent */
+    border-radius: 8px; /* Optional: rounded corners */
+  }

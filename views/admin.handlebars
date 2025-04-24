@@ -1,0 +1,65 @@
+{{!--
+
+If the user is logged in and they are an admin user, and 'GET /admin' endpoint is called, you will render this view
+based on the specs.
+
+
+
+--}}
+<main>
+    <h2>Admin ID: {{_id}}</h2>
+
+    <p>Welcome {{firstName}} {{lastName}}, the time is now: {{currentTime}}.</p>
+    <div>
+        {{#if allusers}}
+            <h3>All Users:</h3>
+            <div class="user-list">
+                {{#each allusers}}
+                    <a id="user-list" href="/profile/{{this._id}}" class="content-section clickable-section">
+                        <h2 class="section-title">{{this.userName}}</h2>
+                        <p class="section-text">ID: {{this._id}}</p>
+                        <p class="section-text">Name: {{this.firstName}} {{this.lastName}}</p>
+                        <p class="section-text">Email: {{this.emailAddress}}</p>
+                        <p class="section-text">Role: {{this.role}}</p>
+                        <p class="section-text">Restrictions: {{this.restrictions}}</p>
+                    </a>
+                {{/each}}
+            </div>
+        {{else}}
+            <p>No users available.</p>
+        {{/if}}
+    </div>
+
+    <div>
+        {{#if message}}
+            <div class="{{message.type}}">
+                {{message.text}}
+            </div>
+        {{/if}}
+    </div>
+
+    <div>
+        {{#if banList}}
+            <h3>Banned Users:</h3>
+            <div class="user-list">
+                {{#each banList}}
+                    <a id="user-list" href="/profile/banned/{{this._id}}" class="content-section clickable-section">
+                        <h2 class="section-title">{{this.userName}}</h2>
+                        <p class="section-text">ID: {{this._id}}</p>
+                        <p class="section-text">Email: {{this.emailAddress}}</p>
+                        <p class="section-text">Role: {{this.role}}</p>
+                    </a>
+                {{/each}}
+            </div>
+        {{else}}
+            <p>No banned users available.</p>
+        {{/if}}
+    </div>
+
+    <div class="redirect-links">
+        <a id="protectedLink" href="/profile">Profile</a>
+        <a href="/logout">Logout</a>
+        <a href="/restaurants">Restaurants</a>
+    </div>
+
+</main>

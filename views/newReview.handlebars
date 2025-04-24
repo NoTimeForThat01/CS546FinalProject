@@ -1,0 +1,18 @@
+{{#extend "main"}}
+{{#content "body"}}
+  <h2>Leave a Review</h2>
+  <form action="/reviews" method="POST">
+    <input type="hidden" name="userId" value="PUT-USER-ID-HERE" />
+    <input type="hidden" name="entityId" value="PUT-ENTITY-ID-HERE" />
+
+    <label for="rating">Rating (1–5):</label>
+    <input type="number" name="rating" min="1" max="5" required />
+
+    <label for="comment">Comment:</label>
+    <textarea name="comment" required></textarea>
+
+    <button type="submit">Submit Review</button>
+  </form>
+{{/content}}
+{{/extend}}
+

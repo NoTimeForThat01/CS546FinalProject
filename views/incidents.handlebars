@@ -1,0 +1,17 @@
+{{#extend "main"}}
+{{#content "body"}}
+  <h2>Reported Incidents</h2>
+  <ul>
+    {{#each incidents}}
+      <li>
+        <strong>Location:</strong> {{this.location}}<br />
+        <strong>Description:</strong> {{this.description}}<br />
+        <strong>Severity:</strong> {{this.severity}}<br />
+        <strong>Status:</strong> {{this.status}}<br />
+        <strong>Reported At:</strong> {{this.timestamp}}<br />
+      </li>
+    {{/each}}
+  </ul>
+{{/content}}
+{{/extend}}
+

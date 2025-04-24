@@ -1,0 +1,29 @@
+{
+  "name": "cs546finalproject",
+  "version": "1.0.0",
+  "description": "CS546 Group 3 Final Project",
+  "main": "app.js",
+  "type": "module",
+  "scripts": {
+    "start": "node app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pauln502/CS546FinalProject.git"
+  },
+  "author": "Paul Nguyen, Juliana McGaffic, Amrit Kaur, David Arguello",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/pauln502/CS546FinalProject/issues"
+  },
+  "homepage": "https://github.com/pauln502/CS546FinalProject#readme",
+  "dependencies": {
+    "bcrypt": "^5.1.1",
+    "express": "^5.1.0",
+    "express-handlebars": "^8.0.1",
+    "express-session": "^1.18.1",
+    "mongodb": "^6.15.0",
+    "xxs": "^0.0.1"
+  }
+}

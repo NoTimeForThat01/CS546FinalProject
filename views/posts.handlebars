@@ -1,0 +1,61 @@
+<div class="post-list">
+  <a href="/posts/createpost" class="btn btn-primary">Add New Restaurant</a>
+
+{{#if posts}}
+    <p>We have {{posts.length}} restaurants available.</p> 
+    {{#each posts}}
+      <div class="post-page">
+        <a href="/posts/{{_id}}" class="restaurant-box"></a>
+          <div class="restaurant-box-content">
+            <h2>Restaurant Name: {{name}}</h2>
+            <p>Address: {{address}}</p>
+            <p>Cuisine: {{cuisine}}</p>
+            <p>Restrictions:</p>
+            {{#if diet.length}}
+            {{#each diet}}
+            <p>{{this}}</p>
+            {{/each}}
+            {{else}}
+            <p>No Restrictions Accommodated</p>
+            {{/if}}
+            
+            <p>Quality Rating: {{qualRating}}</p>
+            <p>Safety Rating: {{safetyRating}}</p>
+            <p>Accessibility Rating: {{accessRating}}</p>
+            <p>Number of Incidents: {{incidentOccurred}}</p>
+
+            <p>Incident Comments:</p>
+            {{#if incidentComment.length}}
+              {{#each incidentComment}}
+                <p>{{this}}</p>
+              {{/each}}
+            {{else}}
+              <p>No incident comments.</p>
+            {{/if}}
+
+            <div class="review-section">
+              <h3>Reviews</h3>
+              {{#if reviews.length}} 
+                <ul>
+                  {{#each reviews}}
+                    <li>Rating: {{qualRating}} - {{review}}</li>
+                  {{/each}}
+                </ul>
+              {{else}}
+                <p>No Reviews Yet.</p>
+              {{/if}} 
+            </div>
+
+            <div class="post-actions">
+              <a href="/posts/{{_id}}/rate" class="restaurant-box">Rate This Restaurant</a>
+                <a href="/posts/{{_id}}/edit" class="restaurant-box">Edit</a>
+            </div>
+
+          </div>
+        </a>
+      </div>
+    {{/each}}
+  {{else}}
+    <p>No restaurants available.</p>
+  {{/if}}
+</div>
