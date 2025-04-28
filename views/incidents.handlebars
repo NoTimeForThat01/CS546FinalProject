@@ -1,17 +1,21 @@
-{{#extend "main"}}
-{{#content "body"}}
-  <h2>Reported Incidents</h2>
-  <ul>
-    {{#each incidents}}
-      <li>
-        <strong>Location:</strong> {{this.location}}<br />
-        <strong>Description:</strong> {{this.description}}<br />
-        <strong>Severity:</strong> {{this.severity}}<br />
-        <strong>Status:</strong> {{this.status}}<br />
-        <strong>Reported At:</strong> {{this.timestamp}}<br />
-      </li>
-    {{/each}}
-  </ul>
-{{/content}}
-{{/extend}}
+<main>
+<div id="incidents-div" class="content-section">
+  <h2 class="section-title">Reported Incidents</h2>
+  {{#if incidents}}
+    <ul>
+      {{#each incidents}}
+        <li>
+          <strong>Location:</strong> {{this.location}}<br />
+          <strong>Description:</strong> {{this.description}}<br />
+          <strong>Severity:</strong> {{this.severity}}<br />
+          <strong>Status:</strong> {{this.status}}<br />
+          <strong>Reported At:</strong> {{this.timestamp}}<br />
+        </li>
+      {{/each}}
+    </ul>
+      {{else}}
+        <p>No incidents to report</p>
+  {{/if}} 
+</div>
 
+</main>

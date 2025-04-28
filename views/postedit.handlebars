@@ -1,0 +1,55 @@
+<form action="/posts/{{post._id}}/updatepost" method="POST">
+
+    <div>
+        <p>Current Restaurant Name: {{post.name}}</p>
+        <p>Current Address: {{post.address}}</p>
+        <p>Current Cuisine: {{post.cuisine}}</p>
+        <p>Current Dietary Restriction(s):</p> 
+            {{#if diet.length}}
+            {{#each diet}}
+            <p>{{this}}</p>
+            {{/each}}
+            {{else}}
+            <p>No Restrictions Accommodated</p>
+            {{/if}}
+    </div>
+    
+    <label for="name">Restaurant Name:</label>
+    <input type="text" name="name" id="name" required><br>
+
+    <label for="address">Address:</label>
+    <input type="text" name="address" id="address" required><br>
+
+    <label for="cuisine">Cuisine:</label>
+    <input type="text" name="cuisine" id="cuisine" required><br>
+
+    <div>
+                    <label for="diet">Restrictions:</label>
+                    <select id="diet" name="diet[]" multiple>
+                        <option value="none">None</option>
+                        <option value="lactose">Lactose</option>
+                        <option value="gluten">Gluten</option>
+                        <option value="vegetarian">Vegetarian</option>
+                        <option value="vegan">Vegan</option>
+                        <option value="kosher">Kosher</option>
+                        <option value="keto">Keto</option>
+                        <option value="diabetes">Diabetes</option>
+                        <option value="dairyfree">Dairy free</option>
+                        <option value="lowcarb">Low carb</option>
+                        <option value="allergy">Other allergy</option>
+                    </select>
+                </div>
+
+                <div id="other-allergy-container">
+                    <label for="otherAllergyInput">List other allergies:</label>
+                    <input type="text" id="otherAllergyInput" name="otherAllergyInput">
+                </div>
+
+    <button type="submit">Update Restaurant</button>
+</form>
+
+<form action="/posts/{{post._id}}/delete" method="POST">
+    <button type="submit">Delete Restaurant</button>
+</form>
+
+<a href="/posts">Back to Posts</a>

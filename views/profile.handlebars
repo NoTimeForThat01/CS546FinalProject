@@ -4,15 +4,69 @@ If the user is logged in , and 'GET /protected' endpoint is called, you will ren
 
 --}}
 <main class="profile-container">
-    <h2>Username: {{userName}} <a href="/pofile/edit/{{_id}}" id="edit-link" class="edit-link">Edit</a></h2>
+    <h2>Username: {{userName}} <a href="/profile/edit/{{_id}}" id="edit-link" class="edit-link">Edit</a></h2>
+
+    <div id="edit-container" class="edit-container" hidden>
+        {{#if banned}}
+        <p>Can't edit user, unban the user first.</p>
+        {{else}}
+        <form id="edit-form" action="/profile/edit/{{_id}}" method="POST">
+            {{#if error}}
+            <div class='error'>{{message}}</div>
+            {{/if}}
+            <div><label>First Name: <input type="text" name="firstNameInput"></label></div>
+            <div><label>Last Name: <input type="text" name="lastNameInput"></label></div>
+            <div><label>Username: <input type="text" name="userNameInput"></label></div>
+            <div><label>Email: <input type="email" name="emailAddressInput"></label></div>
+            <div><label>Password: <input type="password" name="passwordInput"></label></div>
+            <div><label>Confirm Password: <input type="password" name="confirmPasswordInput"></label></div>
+            <div><label>Dietary Restrictions: 
+            <select name="restrictionsInput" id="restrictionsInput" multiple>
+                <option value="none">None</option>
+                <option value="lactose">Lactose Intolerant</option>
+                <option value="gluten">Gluten Free</option>
+                <option value="vegetarian">Vegetarian</option>
+                <option value="vegan">Vegan</option>
+                <option value="kosher">Kosher</option>
+                <option value="keto">Keto</option>
+                <option value="diabetes">Diabetic</option>
+                <option value="dairyfree">Dairy Free</option>
+                <option value="lowcarb">Low Carb</option>
+                <option value="allergy">Allergies</option>
+            </select>
+            </label></div>
+            <div id="other-allergy-container" style="display:none;">
+            <label>Other Allergies (comma separated): 
+                <input type="text" name="otherAllergyInput" id="otherAllergyInput">
+            </label>
+            </div>
+            {{#if isAdmin}}
+            <div>
+                <label>Role: 
+                <select name="roleInput">
+                    <option value="user">User</option>
+                    <option value="admin">Admin</option>
+                </select>
+                </label>
+            </div>
+            {{/if}}
+            <button class="review-btn" type="submit">Edit</button>
+        </form>
+
+        <form id="delete-form" action="/profile/delete/{{_id}}" method="POST">
+            <button class="ban-btn" type="submit">Delete Profile</button>
+        </form>
+        {{/if}}
+    </div>
+
       
     <div>
         <h3>User Infomation:</h3>
-            Name: {{firstName}} {{lastName}} <br>
-            User ID: {{_id}} <br>
-            Email: {{emailAddress}} <br>
-            Restrictions: {{#each restrictions}} {{this}} {{/each}} <br>
-            Role: {{role}} <br>
+            <div>Name:<br> {{firstName}} {{lastName}}</div>
+            <div>User ID:<br> {{_id}}</div>
+            <div>Email:<br> {{emailAddress}} </div>
+            <div>Restrictions:<br> {{#each restrictions}} {{this}} {{#unless @last}}, {{/unless}} {{/each}} </div>
+            <div>Role:<br> {{role}}</div>
     </div>
     
     <div>
@@ -21,7 +75,7 @@ If the user is logged in , and 'GET /protected' endpoint is called, you will ren
             <ul>
                 {{#each comments}}
                 <li>
-                    <a href="/comment/{{this._id}}">{{this.content}}</a>
+                    <p>{{this}}</p>
                 </li>
                 {{/each}}
             </ul>
@@ -36,7 +90,7 @@ If the user is logged in , and 'GET /protected' endpoint is called, you will ren
             <ul>
                 {{#each reviews}}
                 <li>
-                    <a href="/review/{{this._id}}">{{this.content}}</a>
+                    <p>{{this}}</p>
                 </li>
                 {{/each}}
             </ul>

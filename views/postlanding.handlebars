@@ -1,4 +1,30 @@
-<div class="post-list">
-  <a href="/posts/createpost" class="btn btn-primary">Add New Restaurant</a>
-  <a href="/posts/viewposts" class="btn btn-primary">See Restaurants</a>
+<div class="content-section">
+  <div class="text-center mb-20">
+    <a href="/posts/createpost" class="restaurant-box">
+      Add New Restaurant
+    </a>
+  </div>
+
+  <form action="/posts/viewposts" method="GET" >
+    <label for="diet">Dietary Restriction </label>
+      <select id="diet" name="diet" required>
+        <option value="none">None - View All Restaurants</option>
+        <option value="lactose">Lactose</option>
+        <option value="gluten">Gluten</option>
+        <option value="vegetarian">Vegetarian</option>
+        <option value="vegan">Vegan</option>
+        <option value="kosher">Kosher</option>
+        <option value="diabetes">Diabetes</option>
+        <option value="dairyfree">Dairyfree</option>
+        <option value="lowcarb">Lowcarb</option>
+        <option value="allergy">Allergy</option>
+      </select>
+    </div>
+
+    <div style="text-align: center;">
+      <button type="submit" class="review-btn" style="padding: 10px 20px; background-color: #3498db; color: white; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; transition: background-color 0.3s ease;">
+        Find Restaurants with My Restrictions
+      </button>
+    </div>
+  </form>
 </div>

@@ -18,6 +18,7 @@ export const posts = getCollectionFn('posts');
 export const reviews = getCollectionFn('reviews');
 export const ratings = getCollectionFn('ratings');
 export const restaurant = getCollectionFn('restaurant');
+export const Incidents = getCollectionFn('incidents');////
 
 //This is for the admin
 export const banned = getCollectionFn('banned');

@@ -40,7 +40,7 @@ div {
     margin: 15px;
 }
 
-#user-list {
+#user-list, #incidents-div {
     max-width: 100%;
 }
 
@@ -173,7 +173,7 @@ div {
     background-color: #27ae60;
 }
 
-.login-btn, .signup-btn {
+.login-btn, .signup-btn, .review-btn{
     padding: 8px 15px;
     margin: 0 10px;
     border: none;
@@ -185,7 +185,7 @@ div {
     text-decoration: none;
 }
 
-.login-btn {
+.login-btn, .review-btn {
     background-color: #3498db;
     color: white;
 }
@@ -195,7 +195,7 @@ div {
     color: white;
 }
 
-.login-btn:hover {
+.login-btn:hover, .review-btn:hover {
     background-color: #2980b9;
 }
 
@@ -417,3 +417,65 @@ body.modal-open {
     color: inherit; /* Keep the text color from parent */
     border-radius: 8px; /* Optional: rounded corners */
   }
+  /* post landing */
+
+.content-section {
+    background-color: white;
+    padding: 20px;
+    margin: 0 auto 20px;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    transition: transform 0.3s ease;
+    max-width: 40%;
+    text-align: center;
+    display: block;
+    text-decoration: none;
+}
+
+.restaurant-box {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #2ecc71;
+    color: white;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+    margin-bottom: 20px;
+}
+
+.restaurant-box:hover {
+    background-color: #27ae60;
+}
+
+.review-btn {
+    padding: 10px 20px;
+    background-color: #3498db;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.review-btn:hover {
+    background-color: #2980b9;
+}
+
+form select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 16px;
+    margin: 10px 0;
+}
+
+.text-center {
+    text-align: center;
+}
+
+.mb-20 {
+    margin-bottom: 20px;
+}

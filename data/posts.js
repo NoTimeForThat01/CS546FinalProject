@@ -58,17 +58,22 @@ const getAllPosts = async() => {
 };
 
 const getPostById = async(id) => {
-    id = validationFuncs.isObjId(id);
+
+    if(!ObjectId.isValid(id)) throw 'Not a valid id.';
+    if(!id) throw 'Provide an id.'
+
 
     const postCollection = await posts();
     const post = await postCollection.findOne({_id: new ObjectId(id)});
     if (!post) throw 'Error: Post not found by id provided.';
 
+    post._id = post._id.toString();
     return post;
 };
 
 const deletePostById = async(id) => {
-    id = validationFuncs.isObjId(id);
+    if(!ObjectId.isValid(id)) throw 'Not a valid id.';
+    if(!id) throw 'Provide an id.'
 
     const postCollection = await posts();
     const deletePost = await postCollection.findOneAndDelete({ _id: new ObjectId(id) });
@@ -79,7 +84,9 @@ const deletePostById = async(id) => {
 
 
 const updatePost = async(id, name, address, cuisine, diet) => {
-    id = validationFuncs.isObjId(id);
+    if(!ObjectId.isValid(id)) throw 'Not a valid id.';
+    if(!id) throw 'Provide an id.'
+    
     name = validationFuncs.postNameHelper(name);
     address = validationFuncs.postAddressHelper(address);
     cuisine = validationFuncs.postNameHelper(cuisine);
@@ -105,24 +112,25 @@ const updatePost = async(id, name, address, cuisine, diet) => {
 };
 
 const postRating = async(postId, qualRating, safetyRating, accessRating) => {
+    
     const postCollection = await posts();
-    const ratePost = await postCollection.findOne({ _id: new ObjectId(postId) });
+    const ratePost = await getPostById(postId);
 
-    if(!ratePost) throw 'Post not found.';
+    const qualNum = Number(qualRating);
+    const safetyNum = Number(safetyRating);
+    const accessNum = Number(accessRating);
 
-    const newRating = {
-        qualRating: qualRating,
-        safetyRating: safetyRating,
-        accessRating: accessRating
-    };
+  if (isNaN(qualNum) || isNaN(safetyNum) || isNaN(accessNum)) {
+    throw 'Invalid ratings data';
+  }
 
     const updatedPost = await postCollection.updateOne(
         { _id: new ObjectId(postId) },
         {
           $push: {
-            qualRatings: qualRating,
-            safetyRatings: safetyRating,
-            accessRatings: accessRating
+            qualRatings: qualNum,
+            safetyRatings: safetyNum,
+            accessRatings: accessNum
           }
         }
     );
@@ -146,7 +154,26 @@ const postRating = async(postId, qualRating, safetyRating, accessRating) => {
         }
     );
 
-    return { success: true, message: 'Ratings updated successfully' };
+    return {
+        success: true,
+        message: 'Ratings updated successfully',
+        updatedRatings: {
+          qualRating: avgRate,
+          safetyRating: avgSafety,
+          accessRating: avgAccess
+        }
+      };
+}
+
+const filterPosts = async(diet) => {
+    const allPosts = await postFunctions.getAllPosts();
+
+    if(diet === 'none' || !diet) {
+        return allPosts;
+    }
+
+    const filteredPosts = allPosts.filter((post) => Array.isArray(post.diet) && post.diet.map(d => d.toLowerCase()).includes(diet.toLowerCase()));
+    return filteredPosts
 }
 
 const postFunctions = {
@@ -155,7 +182,8 @@ const postFunctions = {
     getPostById,
     deletePostById,
     updatePost,
-    postRating
+    postRating,
+    filterPosts
 };
 
 export default postFunctions;

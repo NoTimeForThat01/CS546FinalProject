@@ -10,8 +10,8 @@ const constructorMethod = (app) => {
 
     app.use('/', userRoutes);
     app.use('/posts', postRoutes);
-    app.use('/reviews', reviewRoutes);     // ✅ NEW
-    app.use('/incidents', incidentRoutes); // ✅ NEW
+    app.use('/reviews', reviewRoutes);    
+    app.use('/incidents', incidentRoutes); 
 
     app.use(/(.*)/, (req, res) => {
         return res.status(404).render('error', {
@@ -21,4 +21,4 @@ const constructorMethod = (app) => {
     });
 };
 
-export default constructorMethod; //This was missing -DA
+export default constructorMethod; 

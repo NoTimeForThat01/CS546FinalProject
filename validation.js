@@ -1,4 +1,4 @@
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 import {ObjectId} from 'mongodb';
 
 const userPasswordHash = async (plainTextPassword) => {
@@ -197,6 +197,11 @@ const avgRatingCalc = (array) => {
   return sum / array.length;
 }
 
+const incidentCounter = (array) => {
+  if (!Array.isArray(array) || array.length === 0) return 0;
+  return array.length;
+}
+
 
 const userPostFuncs = {
   dataExists,
@@ -215,7 +220,8 @@ const userPostFuncs = {
   roleHelper,
   postNameHelper,
   postAddressHelper,
-  avgRatingCalc
+  avgRatingCalc,
+  incidentCounter
 };
 
 export default userPostFuncs;

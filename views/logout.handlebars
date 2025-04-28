@@ -4,7 +4,11 @@ logout handlebar template
 
 --}}
 <main>
-    <p>You have been logged out</p>
+    {{#if deletedProfile}}
+        <p>Your account has been deleted</p>
+        {{else}}
+        <p>You have been logged out</p>
+    {{/if}}    
 
     <div class="redirect-links">
         <a href="/">Home</a>

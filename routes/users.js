@@ -1,8 +1,10 @@
 import { Router } from 'express';
+import { ObjectId } from 'mongodb';
 const router = Router();
 import userFunctions from '../data/users.js';
 import userHelpers from '../validation.js';
-const { createUser, loginUser, getUserById } = userFunctions; 
+import { reviews } from '../config/mongoCollections.js';
+import xss from 'xss';
 
 router.route('/').get(async (req, res) => {
   try {
@@ -39,18 +41,16 @@ router
     try {
       const registerdUser = req.body;
 
-      //console.log('user.js:', registerdUser);
-
       if (!registerdUser || Object.keys(registerdUser).length === 0) {
         return res.status(400).json({ success: false, message: 'All required fields must be provided.' });
       }
 
       try {
-        registerdUser.firstNameInput = userHelpers.nameHelper(registerdUser.firstNameInput, 'First Name');
-        registerdUser.lastNameInput = userHelpers.nameHelper(registerdUser.lastNameInput, 'Last Name');
-        registerdUser.userNameInput = userHelpers.nameHelper(registerdUser.userNameInput, 'Username');
-        registerdUser.emailAddressInput = userHelpers.emailHelper(registerdUser.emailAddressInput, 'Email');
-        registerdUser.passwordInput = userHelpers.passwordHelper(registerdUser.passwordInput, 'Password');
+        registerdUser.firstNameInput = xss(userHelpers.nameHelper(registerdUser.firstNameInput, 'First Name'));
+        registerdUser.lastNameInput = xss(userHelpers.nameHelper(registerdUser.lastNameInput, 'Last Name'));
+        registerdUser.userNameInput = xss(userHelpers.nameHelper(registerdUser.userNameInput, 'Username'));
+        registerdUser.emailAddressInput = xss(userHelpers.emailHelper(registerdUser.emailAddressInput, 'Email'));
+        registerdUser.passwordInput = xss(userHelpers.passwordHelper(registerdUser.passwordInput, 'Password'));
 
         if (registerdUser.confirmPasswordInput !== registerdUser.passwordInput) {
           return res.status(400).json({ success: false, message: 'Passwords do not match.' });
@@ -61,12 +61,12 @@ router
         }
 
         if (registerdUser.restrictionsInput.length > 1 && registerdUser.restrictionsInput.includes('none')) {
-          throw 'You cannot select "none" with other restrictions';
+          throw 'You cannot select "none" with other restrictions.';
         }
 
         if (registerdUser.restrictionsInput.includes('allergy')) {
           if (!registerdUser.otherAllergyInput || registerdUser.otherAllergyInput.trim() === '') {
-            throw 'You must select at least one restriction';
+            throw 'You must select at least one restriction.';
           }
         
           const otherAllergies = registerdUser.otherAllergyInput
@@ -113,7 +113,7 @@ router
       return res.status(500).render('error', {
         error: true,
         statusCode: 500,
-        message: e instanceof TypeError ? 'Internal Server Error' : e
+        message: e instanceof TypeError ? 'Internal Server Error.' : e
       });
     }
   })
@@ -122,12 +122,12 @@ router
       const logedInUser = req.body;
 
       if (!logedInUser || Object.keys(logedInUser).length === 0) {
-        return res.status(400).json({ success: false, message: 'All fields must be filled' });
+        return res.status(400).json({ success: false, message: 'All fields must be filled.' });
       }
 
       try {
-        logedInUser.emailAddressInput = userHelpers.emailHelper(logedInUser.emailAddressInput, 'Email');
-        logedInUser.passwordInput = userHelpers.passwordHelper(logedInUser.passwordInput, 'Password');
+        logedInUser.emailAddressInput = xss(userHelpers.emailHelper(logedInUser.emailAddressInput, 'Email'));
+        logedInUser.passwordInput = xss(userHelpers.passwordHelper(logedInUser.passwordInput, 'Password'));
       } catch (e) {
         return res.status(400).json({ success: false, message: e });
       }
@@ -138,7 +138,7 @@ router
       );
 
       if (newUserLogin === false) {
-        return res.status(400).json({ success: false, message: 'Either the email address or password is invalid' });
+        return res.status(400).json({ success: false, message: 'Either the email address or password is invalid.' });
       }
 
       req.session.user = newUserLogin;
@@ -161,19 +161,21 @@ router.route('/profile').get(async (req, res) => {
     if (user) {
       const currentTime = new Date().toUTCString();
 
+      const getUser = await userFunctions.getUserById(user._id);
+
       return res.render('profile', {
-        _id: user._id,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        userName: user.userName,
-        emailAddress: user.emailAddress,
-        reviews: user.reviews,
-        comments: user.comments,
-        restrictions: user.restrictions,
-        otherAllergy: user.otherAllergy,
+        _id: getUser._id,
+        firstName: xss(getUser.firstName),
+        lastName: xss(getUser.lastName),
+        userName: xss(getUser.userName),
+        emailAddress: xss(getUser.emailAddress),
+        reviews: getUser.reviews,
+        comments: getUser.comments,
+        restrictions: getUser.restrictions,
+        otherAllergy: xss(getUser.otherAllergy),
         currentTime,
-        role: user.role,
-        isAdmin: user.role === 'admin'
+        role: xss(getUser.role),
+        isAdmin: getUser.role === 'admin'
       });
     }
   } catch (e) {
@@ -190,6 +192,10 @@ router.route('/profile/:id').get(async (req, res) => {
     const id = req.params.id;
     const user = req.session.user;
 
+    if (id === user._id.toString()) {
+      return res.redirect('/profile');
+    }
+
     if (user.role === 'admin') {
       const currentTime = new Date().toUTCString();
 
@@ -205,16 +211,16 @@ router.route('/profile/:id').get(async (req, res) => {
 
       return res.render('profile', {
         _id: getUser._id,
-        firstName: getUser.firstName,
-        lastName: getUser.lastName,
-        userName: getUser.userName,
-        emailAddress: getUser.emailAddress,
+        firstName: xss(getUser.firstName),
+        lastName: xss(getUser.lastName),
+        userName: xss(getUser.userName),
+        emailAddress: xss(getUser.emailAddress),
         reviews: getUser.reviews,
         comments: getUser.comments,
         restrictions: getUser.restrictions,
-        otherAllergy: getUser.otherAllergy,
+        otherAllergy: xss(getUser.otherAllergy),
         currentTime,
-        role: getUser.role,
+        role: xss(getUser.role),
         isAdmin: user.role === 'admin',
         banOps: true
       });
@@ -222,8 +228,131 @@ router.route('/profile/:id').get(async (req, res) => {
       return res.status(403).render('error', {
         error: true,
         statusCode: 403,
-        message: 'Unauthorized: Must be an admin to see user profiles'})
+        message: 'Unauthorized: Must be an admin to see user profiles.'})
     }
+  } catch (e) {
+    return res.status(500).render('error', {
+      error: true,
+      statusCode: 500,
+      message: e instanceof TypeError ? 'Internal Server Error' : e
+    });
+  }
+});
+
+router
+.route('/profile/edit/:id')
+.get(async (req, res) => {
+
+  try {
+    const id = req.params.id;
+    const user = req.session.user;
+
+    if(user.role === 'admin') {
+      res.render('profile', {isAdmin: true});
+    } else if (user.role === 'user') {
+      res.render('profile', {isAdmin: false});
+    }
+
+  } catch (e) {
+    return res.status(500).render('error', {
+      error: true,
+      statusCode: 500,
+      message: e instanceof TypeError ? 'Internal Server Error' : e
+    });
+  }
+})
+.post(async (req, res) => {
+  try {
+    const id = req.params.id;
+    const user = req.session.user;
+
+    if (!user) {
+      return res.status(403).render('error', { error: true, message: 'You must be logged in to edit your profile.' });
+    }
+
+    const formData = req.body;
+    const currentUser = await userFunctions.getUserById(id);
+
+    if (!currentUser) {
+      return res.status(404).render('error', { error: true, statusCode: 404, message: 'User not found' });
+    }
+
+    const firstNameInput = xss(formData.firstNameInput?.trim());
+    const lastNameInput = xss(formData.lastNameInput?.trim());
+    const userNameInput = xss(formData.userNameInput?.trim());
+    const emailAddressInput = xss(formData.emailAddressInput?.trim());
+    const passwordInput = xss(formData.passwordInput?.trim());
+    const confirmPasswordInput = xss(formData.confirmPasswordInput?.trim());
+    let restrictions = formData.restrictionsInput || currentUser.restrictions;
+    let role = formData.roleInput || currentUser.role;
+
+    if (typeof restrictions === 'string') {
+      restrictions = [restrictions];
+    }
+
+    try {
+      const validatedFirst = userHelpers.nameHelper(firstNameInput || currentUser.firstName, 'First Name');
+      const validatedLast = userHelpers.nameHelper(lastNameInput || currentUser.lastName, 'Last Name');
+      const validatedUser = userHelpers.nameHelper(userNameInput || currentUser.userName, 'Username');
+      const validatedEmailAddress = userHelpers.emailHelper(emailAddressInput || currentUser.emailAddress, 'Email');
+
+      let finalPassword = currentUser.password;
+      let newPassword = true;
+
+      if (passwordInput || confirmPasswordInput) {
+        if (passwordInput !== confirmPasswordInput) {
+          return res.status(400).render('error', { error: true, message: 'Passwords do not match.' });
+        }
+        const validatedPassword = userHelpers.passwordHelper(passwordInput, 'Password');
+        finalPassword = validatedPassword;
+        newPassword = false;
+      }
+
+      if (restrictions.includes('allergy')) {
+        const other = xss(formData.otherAllergyInput?.trim());
+        if (!other) throw 'Please specify other allergies.';
+        const otherAllergies = other
+          .split(',')
+          .map(a => a.trim().toLowerCase())
+          .filter(a => a.length > 0);
+        restrictions = [...new Set([...restrictions, ...otherAllergies])];
+      }
+
+      restrictions = userHelpers.restrictionsHelper(restrictions);
+
+      if (user.role !== 'admin') {
+        role = currentUser.role;
+      } else {
+        role = userHelpers.roleHelper(role);
+      }
+
+      const updatedUser = await userFunctions.updateUser(
+        id,
+        validatedFirst,
+        validatedLast,
+        validatedUser,
+        validatedEmailAddress,
+        finalPassword,
+        newPassword,
+        restrictions,
+        role
+      );
+
+      if (updatedUser.updatedUser === true) {
+        req.session.user = updatedUser.updateInfo;
+        return res.redirect('/profile');
+      } else {
+        return res.status(400).render('error', {
+          error: true,
+          statusCode: 400,
+          message: 'Could not update profile.'
+        });
+      }
+
+    } catch (e) {
+      return res.status(400).render('error', { error: true, message: e });
+    }
+
   } catch (e) {
     return res.status(500).render('error', {
       error: true,
@@ -271,7 +400,7 @@ router.route('/profile/banned/:id').get(async (req, res) => {
       return res.status(403).render('error', {
         error: true,
         statusCode: 403,
-        message: 'Unauthorized: Must be an admin to see user profiles'})
+        message: 'Unauthorized: Must be an admin to see user profiles.'})
     }
   } catch (e) {
     return res.status(500).render('error', {
@@ -282,10 +411,9 @@ router.route('/profile/banned/:id').get(async (req, res) => {
   }
 });
 
-//TODO:implemetns ban
 router.route('/admin/ban/:id').post(async (req, res) => {
   try{
-    const id = req.params.id;
+    const id = xss(req.params.id);
     const user = req.session.user;
 
     if (user.role === 'admin') {
@@ -301,10 +429,10 @@ router.route('/admin/ban/:id').post(async (req, res) => {
       const banUser = await userFunctions.banUserById(id);
 
       if (banUser.banned === true) {
-        req.session.message = {type: 'success', text: 'User successfully banned'};
+        req.session.message = {type: 'success', text: 'User successfully banned.'};
         return res.redirect('/admin');
       } else {
-        req.session.message = {type: 'error', text: 'Could not ban user, check ban lint'};
+        req.session.message = {type: 'error', text: 'Could not ban user, check ban list.'};
         return res.redirect('/admin');
       }
 
@@ -312,22 +440,21 @@ router.route('/admin/ban/:id').post(async (req, res) => {
       return res.status(403).render('error', {
         error: true,
         statusCode: 403,
-        message: 'Unauthorized: Must be an admin to see user profiles'})
+        message: 'Unauthorized: Must be an admin to see user profiles.'})
     }
   } catch (e) {
     return res.status(500).render('error', {
       error: true,
       statusCode: 500,
-      message: e
-      //instanceof TypeError ? 'Internal Server Error' : e 
+      message: e instanceof TypeError ? 'Internal Server Error' : e 
     });
   }
 });
 
-//TODO:implement unban
+
 router.route('/admin/unban/:id').post(async (req, res) => {
   try{
-    const id = req.params.id;
+    const id = xss(req.params.id);
     const user = req.session.user;
 
     if (user.role === 'admin') {
@@ -343,10 +470,10 @@ router.route('/admin/unban/:id').post(async (req, res) => {
       const unbanUser = await userFunctions.unbanUser(id);
 
       if (unbanUser.unbanned === true) {
-        req.session.message = {type: 'success', text: 'User successfully unbanned'};
+        req.session.message = {type: 'success', text: 'User successfully unbanned.'};
         return res.redirect('/admin');
       } else {
-        req.session.message = {type: 'error', text: 'Could not ban user, check ban lint'};
+        req.session.message = {type: 'error', text: 'Could not unban user, check user list.'};
         return res.redirect('/admin');
       }
 
@@ -354,7 +481,7 @@ router.route('/admin/unban/:id').post(async (req, res) => {
       return res.status(403).render('error', {
         error: true,
         statusCode: 403,
-        message: 'Unauthorized: Must be an admin to see user profiles'})
+        message: 'Unauthorized: Must be an admin to see user profiles.'})
     }
   } catch (e) {
     return res.status(500).render('error', {
@@ -374,41 +501,44 @@ router.route('/admin').get(async (req, res) => {
       const currentTime = new Date().toUTCString();
 
       let allUsers = await userFunctions.getAllUsers();
-      const userList = allUsers.map(u => ({
-        _id: u._id,
-        firstName: u.firstName,
-        lastName: u.lastName,
-        userName: u.userName,
-        emailAddress: u.emailAddress,
-        reviews: u.reviews,
-        comments: u.comments,
-        restrictions: u.restrictions,
-        otherAllergy: u.otherAllergy,
-        role: u.role
+
+      const userList = allUsers
+      .filter(u => u._id.toString() !== user._id.toString())
+      .map(u => ({
+        _id: xss(u._id),
+        firstName: xss(u.firstName),
+        lastName: xss(u.lastName),
+        userName: xss(u.userName),
+        emailAddress: xss(u.emailAddress),
+        reviews: xss(u.reviews),
+        comments: xss(u.comments),
+        restrictions: xss(u.restrictions),
+        otherAllergy: xss(u.otherAllergy),
+        role: xss(u.role)
       }));
 
       const banList = await userFunctions.checkBanList();
       const userBanList = banList.map(b => ({
-        _id: b._id,
-        userName: b.userName,
-        emailAddress: b.emailAddress,
-        role: b.role
+        _id: xss(b._id),
+        userName: xss(b.userName),
+        emailAddress: xss(b.emailAddress),
+        role: xss(b.role)
       }));
 
       req.session.message = null; //clear before sending to client
 
       return res.render('admin', {
-        _id: user._id,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        userName: user.userName,
-        emailAddress: user.emailAddress,
-        reviews: user.reviews,
-        comments: user.comments,
-        restrictions: user.restrictions,
-        otherAllergy: user.otherAllergy,
+        _id: xss(user._id),
+        firstName: xss(user.firstName),
+        lastName: xss(user.lastName),
+        userName: xss(user.userName),
+        emailAddress: xss(user.emailAddress),
+        reviews: xss(user.reviews),
+        comments: xss(user.comments),
+        restrictions: xss(user.restrictions),
+        otherAllergy: xss(user.otherAllergy),
         currentTime,
-        role: user.role,
+        role: xss(user.role),
         isAdmin: user.role === 'admin',
         allusers: userList,
         banList: userBanList,
@@ -416,7 +546,65 @@ router.route('/admin').get(async (req, res) => {
       });
     }
 
-    return res.status(403).render('error', {error: true, statusCode: 403, message: 'You do not have access to this page'});
+    return res.status(403).render('error', {error: true, statusCode: 403, message: 'You do not have access to this page.'});
+  } catch (e) {
+    return res.status(500).render('error', {
+      error: true,
+      statusCode: 500,
+      message: e instanceof TypeError ? 'Internal Server Error' : e
+    });
+  }
+});
+
+router.route('/profile/delete/:id').post(async (req, res) => { //Could not use .delete, so using .post
+  try{
+    const id = xss(req.params.id);
+    const user = req.session.user;
+
+    if (user) {
+
+      try {
+        userHelpers.dataExists(id);
+        userHelpers.isDataString(id);
+        userHelpers.isSpaces(id);
+      } catch (e) {
+        return res.status(400).render('error', {error: true, statusCode: 400, message: e});
+      }
+
+      if (user.role === 'user') {
+        const deleteProfile = await userFunctions.deleteUserById(id);   
+
+        if (deleteProfile.deleted === true) {
+          req.session.destroy();
+          return res.render('logout', {deletedProfile: true});
+        } else {
+          return res.status(500).render('error', {error: true, statusCode: 500, message: 'Could not delete your account.'});
+        }
+
+      } else if (user.role === 'admin') {
+
+        if (id === user._id){
+          const deleteProfile = await userFunctions.deleteUserById(id);   
+
+          if(deleteProfile.deleted === true) {
+            req.session.destroy();
+            return res.render('logout', {deletedProfile: true});
+          }
+        } else if(id !== user._id){
+
+          const deleteProfile = await userFunctions.deleteUserById(id); 
+
+          if(deleteProfile.deleted === true) {
+            req.session.message = {type: 'success', text: `User with id ${deleteProfile.id} was deleted`};
+            return res.redirect('/admin');
+          }
+
+        } else {
+          return res.status(500).render('error', {error: true, statusCode: 500, message: 'Could not delete your account.'});
+        }
+      }
+    }
+
   } catch (e) {
     return res.status(500).render('error', {
       error: true,

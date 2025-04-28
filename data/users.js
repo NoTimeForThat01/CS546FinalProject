@@ -1,6 +1,6 @@
 import { users, banned } from '../config/mongoCollections.js';
 import validationFuncs from '../validation.js';
-import { ObjectId } from 'mongodb';
+import { ObjectId, ReturnDocument } from 'mongodb';
 
 // Create a new user
 export const createUser = async (
@@ -139,8 +139,6 @@ export const deleteUserById = async (userId) => {
   const userCollection = await users();
   const deletedUser = await userCollection.findOneAndDelete({ _id: new ObjectId(userId)});
 
-  console.log(deletedUser);
-
   if (!deletedUser) {
     throw `Could not delete user with ID: ${userId}`;
   }
@@ -225,9 +223,82 @@ export const unbanUser = async (userId) => {
   return { unbanned: true, id: userId };
 };
 
-// Placeholder for update (to be implemented)
-export const updateUser = async () => {
-  // TODO: implement updateUser
+export const updateUser = async (
+  userId,
+  firstName,
+  lastName,
+  userName,
+  emailAddress,
+  password,
+  newPassword,
+  restrictions,
+  role
+) => {
+  const tempArr = [userId, firstName, lastName, userName, emailAddress, password, restrictions, role];
+
+  for(let i = 0; i < tempArr.length ; i++) {
+    validationFuncs.dataExists(tempArr[i]);
+  }
+
+  validationFuncs.isObjId(userId, 'User ID');
+
+  validationFuncs.isDataString(userId, 'User ID');
+  validationFuncs.isSpaces(userId, 'User ID');
+  userId = validationFuncs.trimStr(userId);
+
+  firstName = validationFuncs.nameHelper(firstName, 'First name');
+  lastName = validationFuncs.nameHelper(lastName, 'Last name');
+  emailAddress = validationFuncs.emailHelper(emailAddress, 'Email');
+  userName = validationFuncs.nameHelper(userName, 'Username');
+  restrictions = validationFuncs.restrictionsHelper(restrictions, 'Restrictions');
+
+  if(newPassword !== true) {
+    password = validationFuncs.passwordHelper(password, 'Password');
+    password = await validationFuncs.userPasswordHash(password);
+  } else {
+    password = password;
+  }
+
+  role = validationFuncs.roleHelper(role);
+  
+  const userCollection = await users();
+  const banCollection = await banned();
+
+  const getUser = await userCollection.findOne({_id: new ObjectId(userId)});
+
+  const checkBan = await banCollection.findOne({emailAddress});
+  if (checkBan) throw 'An account with this email is banned, please try another email';
+  const checkEmail = await userCollection.findOne({ emailAddress, _id: { $ne: new ObjectId(userId) } });
+  if (checkEmail) throw 'Email already in use';
+
+  const checkUserName = await userCollection.findOne({ userName, _id: { $ne: new ObjectId(userId) } });
+  if (checkUserName) throw 'Username already in use';
+
+  const updateUser = {
+    firstName,
+    lastName,
+    userName,
+    emailAddress,
+    reviews: getUser.reviews || [],
+    comments: getUser.comments || [],
+    restrictions,
+    password,
+    role
+  };
+
+  const updateInfo = await userCollection.findOneAndUpdate(
+    { _id: new ObjectId(userId) },
+    { $set: updateUser },
+    { returnDocument: 'after' }
+  );
+
+  if (!updateInfo) {
+    return { updatedUser: false };
+  }
+
+  updateInfo._id = updateInfo._id.toString();
+
+  return { updatedUser: true, updateInfo: updateInfo};
 };
 
 // Helper for use in auth routes
@@ -247,7 +318,6 @@ export const insertUser = async (userObj) => {
   return { insertedUser: true };
 };
 
-// Default export if you want everything at once
 const userFunctions = {
   createUser,
   loginUser,

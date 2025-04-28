@@ -1,15 +1,16 @@
-{{#extend "main"}}
-{{#content "body"}}
-  <h2>Reviews</h2>
-  <ul>
-    {{#each reviews}}
-      <li>
-        <strong>Rating:</strong> {{this.rating}} <br />
-        <strong>Comment:</strong> {{this.comment}} <br />
-        <strong>Date:</strong> {{this.timestamp}}
-      </li>
-    {{/each}}
-  </ul>
-{{/content}}
-{{/extend}}
-
+<main>
+  <div id="incidents-div" class="content-section">
+  <h2 class="section-title">Reviews</h2>
+    {{#if reviews}}  
+        {{#each reviews}}
+          <div>
+            <strong>Rating:</strong> {{this.rating}} <br />
+            <strong>Comment:</strong> {{this.comment}} <br />
+            <strong>Date:</strong> {{this.timestamp}}
+          </div>
+        {{/each}}
+      {{else}}
+      <p>No reviews available.</p>
+    {{/if}}
+  </div>
+</main>

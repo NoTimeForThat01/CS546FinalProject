@@ -157,6 +157,18 @@
     }
   });
 
+  $(document).on('click', '#edit-link', function(e) {
+    e.preventDefault();
+  
+    const container = $('#edit-container');
+  
+    if (container.is(':visible')) {
+      container.hide();
+    } else {
+      container.show();
+    }
+  });
+
   // Signup Modal
   if ($('.signup-btn').length) {
     createModal('signupModal', 'Create Your Account', `
@@ -224,18 +236,6 @@
 
         if (restrictions.length > 1 && restrictions.includes('none')) {
           throw 'You cannot select "none" with other restrictions';
-        }
-
-        if (restrictions.includes('allergy')) {
-          if (!otherAllergy || otherAllergy.trim() === '') {
-            throw 'You must select at least one restriction.';
-          }
-          
-          const otherAllergies = otherAllergy
-            .split(',')
-            .map(allergy => allergy.trim().toLowerCase());
-
-          restrictions.push(...otherAllergies);
         }
 
         restrictionsHelper(restrictions, 'Restrictions');

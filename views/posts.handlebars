@@ -1,44 +1,68 @@
+<main>
 <div class="post-list">
+  <a href="/posts" class="btn btn-primary">Back</a>
   <a href="/posts/createpost" class="btn btn-primary">Add New Restaurant</a>
 
 {{#if posts}}
     <p>We have {{posts.length}} restaurants available.</p> 
     {{#each posts}}
       <div class="post-page">
-        <a href="/posts/{{_id}}" class="restaurant-box"></a>
           <div class="restaurant-box-content">
             <h2>Restaurant Name: {{name}}</h2>
             <p>Address: {{address}}</p>
             <p>Cuisine: {{cuisine}}</p>
-            <p>Restrictions:</p>
-            {{#if diet.length}}
-            {{#each diet}}
-            <p>{{this}}</p>
-            {{/each}}
-            {{else}}
-            <p>No Restrictions Accommodated</p>
-            {{/if}}
+            <p>Restrictions:
+              {{#if diet.length}}
+                {{#each diet}}
+                  {{this}}
+                {{/each}}
+              {{else}}
+                No Restrictions Accommodated
+              {{/if}}
+            </p>
             
-            <p>Quality Rating: {{qualRating}}</p>
-            <p>Safety Rating: {{safetyRating}}</p>
-            <p>Accessibility Rating: {{accessRating}}</p>
+            <p>Quality Rating: 
+              {{#if qualRating}}
+                {{qualRating}}
+              {{else}}
+                No Rating Yet
+              {{/if}}
+            </p>
+
+            <p>Safety Rating: 
+              {{#if safetyRating}}
+                {{safetyRating}}
+              {{else}}
+                No Rating Yet
+              {{/if}}
+            </p>
+
+            <p>Accessibility Rating: 
+              {{#if accessRating}}
+                {{accessRating}}
+              {{else}}
+                No Rating Yet
+              {{/if}}
+            </p>
+
             <p>Number of Incidents: {{incidentOccurred}}</p>
 
-            <p>Incident Comments:</p>
+            <p>Incident Comments:
             {{#if incidentComment.length}}
               {{#each incidentComment}}
-                <p>{{this}}</p>
+                {{this}}
               {{/each}}
             {{else}}
-              <p>No incident comments.</p>
+              No incident comments.
             {{/if}}
+            </p>
 
             <div class="review-section">
               <h3>Reviews</h3>
               {{#if reviews.length}} 
                 <ul>
                   {{#each reviews}}
-                    <li>Rating: {{qualRating}} - {{review}}</li>
+                    <li>{{this}}</li>
                   {{/each}}
                 </ul>
               {{else}}
@@ -47,10 +71,104 @@
             </div>
 
             <div class="post-actions">
-              <a href="/posts/{{_id}}/rate" class="restaurant-box">Rate This Restaurant</a>
-                <a href="/posts/{{_id}}/edit" class="restaurant-box">Edit</a>
-            </div>
+              <h3>Rate this Restaurant</h3>
+              <form action="/posts/{{_id}}/rate" method="POST">
 
+                <div class="form-area"></div>
+                <label for="qualRating">Overall Quality Rating (1-5) </label>
+                <select type="number" id="qualRating" name="qualRating" required>
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="4">4</option>
+                  <option value="5">5</option>
+                </select>
+
+                <label for="safetyRating">Safety Rating (1-5) </label>
+                <select type="number" id="safetyRating" name="safetyRating" required>
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="4">4</option>
+                  <option value="5">5</option>
+                </select>
+
+                <label for="accessRating">Accessibility Rating (1-5) </label>
+                <select type="number" id="accessRating" name="accessRating" required>
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="4">4</option>
+                  <option value="5">5</option>
+                </select>
+
+              <button type="submit">Submit Rating</button>
+              </form>
+            </div>
+{{!--  --}}
+<div class="content-section">
+  <h2 class="section-title">Leave a Review</h2>
+  <form action="/reviews/{{_id}}" method="POST">
+    <input type="hidden" name="userId" value="6605efcbff3e03c6c2df7fd2" />
+    <input type="hidden" name="entityId" value="{{_id}}" />
+
+    <div style="margin-bottom: 15px; text-align: left;">
+      <label for="comment">Review:</label>
+      <textarea name="comment" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; font-size: 16px; min-height: 100px;" required></textarea>
+    </div>
+
+    <div style="text-align: center; margin-top: 20px;">
+      <button class="review-btn" type="submit">Submit Review</button>
+    </div>
+  </form>
+</div>
+{{!--  --}}
+{{!--  --}}
+ <div id="incidents-div" class="content-section">
+
+  {{#if incidents}}
+    <ul>
+      {{#each incidents}}
+        <li>
+          <strong>Location:</strong> {{this.location}}<br />
+          <strong>Description:</strong> {{this.description}}<br />
+          <strong>Severity:</strong> {{this.severity}}<br />
+          <strong>Status:</strong> {{this.status}}<br />
+          <strong>Reported At:</strong> {{this.timestamp}}<br />
+        </li>
+      {{/each}}
+    </ul>
+      {{else}}
+ 
+  {{/if}} 
+<div id="incidents-div" class="content-section">
+  <h2 class="section-title">Report a Safety Incident</h2>
+  <form action="/incidents" method="POST">
+    <input type="hidden" name="reporterId" value="6605efcbff3e03c6c2df7fd2" />
+  
+    <input type="hidden" name="restaurantId" value="{{_id}}" />
+    
+    <label for="location">Location:</label>
+    <input type="text" name="location" required />
+
+    <label for="description">Description:</label>
+    <textarea name="description" required></textarea>
+
+    <label for="severity">Severity:</label>
+    <select name="severity" required>
+      <option value="Low">Low</option>
+      <option value="Medium">Medium</option>
+      <option value="High">High</option>
+    </select>
+    <div style="text-align: center; margin-top: 1rem;">
+      <button class="review-btn" type="submit">Submit Incident</button>
+    </div>
+  </form>
+</div>
+{{!--  --}}
+            <div class="post-actions">
+              <a href="/posts/{{_id}}/postedit" class="restaurant-box">Edit</a>
+            </div>
           </div>
         </a>
       </div>
@@ -59,3 +177,4 @@
     <p>No restaurants available.</p>
   {{/if}}
 </div>
+</main>
